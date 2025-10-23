@@ -1,20 +1,117 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Notes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        *ngIf="backendNotReady"
+        fill="clear"
+        color="warning"
+        (click)="openStatusPopover($event, backendStatusPopover)"
+      >
+        <ion-icon slot="icon-only" name="warning-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="createNote()">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-popover #backendStatusPopover side="bottom" alignment="center">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <ion-text color="warning"><strong>Backend not ready</strong></ion-text>
+      <p class="ion-margin-top" *ngIf="lastErrorMessage; else urlInfo">
+        {{ lastErrorMessage }}
+      </p>
+      <ng-template #urlInfo>
+        <p class="ion-text-wrap">URL: {{ graphqlUrl }}</p>
+      </ng-template>
+      <div class="ion-text-right ion-margin-top">
+        <ion-button
+          size="small"
+          fill="clear"
+          (click)="backendStatusPopover.dismiss()"
+          >Dismiss</ion-button
+        >
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-popover>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+<ion-content [fullscreen]="true">
+  <div class="priority-toolbar">
+    <ion-segment
+      mode="ios"
+      scrollable
+      [value]="selectedPriority"
+      (ionChange)="onSegmentChange($event)"
+    >
+      <ion-segment-button value="ALL">
+        <span class="seg-row">
+          <ion-label>All</ion-label>
+          <ion-badge color="medium" *ngIf="getCount('ALL')>0" class="seg-badge"
+            >{{ getCount('ALL') }}</ion-badge
+          >
+        </span>
+      </ion-segment-button>
+      <ion-segment-button value="LOW" [disabled]="getCount('LOW')===0">
+        <span class="seg-row">
+          <ion-label>Low</ion-label>
+          <ion-badge color="success" *ngIf="getCount('LOW')>0" class="seg-badge"
+            >{{ getCount('LOW') }}</ion-badge
+          >
+        </span>
+      </ion-segment-button>
+      <ion-segment-button value="MEDIUM" [disabled]="getCount('MEDIUM')===0">
+        <span class="seg-row">
+          <ion-label>Medium</ion-label>
+          <ion-badge
+            color="warning"
+            *ngIf="getCount('MEDIUM')>0"
+            class="seg-badge"
+            >{{ getCount('MEDIUM') }}</ion-badge
+          >
+        </span>
+      </ion-segment-button>
+      <ion-segment-button value="HIGH" [disabled]="getCount('HIGH')===0">
+        <span class="seg-row">
+          <ion-label>High</ion-label>
+          <ion-badge color="danger" *ngIf="getCount('HIGH')>0" class="seg-badge"
+            >{{ getCount('HIGH') }}</ion-badge
+          >
+        </span>
+      </ion-segment-button>
+    </ion-segment>
   </div>
+
+  <ion-card class="notes-card">
+    <ion-list class="notes-list" lines="full">
+      <ion-item *ngFor="let n of notes" (click)="editNote(n)">
+        <ion-label>
+          <h2>{{ n.title }}</h2>
+          <p class="note-meta">{{ n.created_at | date:'medium' }}</p>
+          <p class="note-content">{{ n.content }}</p>
+        </ion-label>
+        <ion-badge
+          slot="end"
+          [color]="n.priority === 'HIGH' ? 'danger' : n.priority === 'MEDIUM' ? 'warning' : 'success'"
+        >
+          {{ n.priority }}
+        </ion-badge>
+        <ion-buttons slot="end">
+          <ion-button
+            fill="clear"
+            color="danger"
+            (click)="$event.stopPropagation(); confirmDelete(n)"
+          >
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" (click)="$event.stopPropagation(); editNote(n)">
+            <ion-icon slot="icon-only" name="pencil-sharp" aria-label="Edit"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+  </ion-card>
 </ion-content>

@@ -1,0 +1,96 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ id ? 'Edit Note' : 'New Note' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        *ngIf="backendNotReady"
+        fill="clear"
+        color="warning"
+        (click)="openStatusPopover($event, backendStatusNotePopover)"
+      >
+        <ion-icon slot="icon-only" name="warning-outline"></ion-icon>
+      </ion-button>
+      <ion-button
+        size="small"
+        shape="round"
+        class="cancel-btn"
+        (click)="cancel()"
+        >Cancel</ion-button
+      >
+      <ion-button
+        size="small"
+        shape="round"
+        class="save-btn"
+        (click)="save()"
+        [disabled]="form.invalid || backendNotReady"
+        >Save</ion-button
+      >
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-popover #backendStatusNotePopover side="bottom" alignment="center">
+  <ng-template>
+    <ion-content class="ion-padding">
+      <ion-text color="warning"><strong>Backend not ready</strong></ion-text>
+      <p class="ion-margin-top" *ngIf="lastErrorMessage; else noteUrlInfo">
+        {{ lastErrorMessage }}
+      </p>
+      <ng-template #noteUrlInfo>
+        <p class="ion-text-wrap">URL: {{ graphqlUrl }}</p>
+      </ng-template>
+      <div class="ion-text-right ion-margin-top">
+        <ion-button
+          size="small"
+          fill="clear"
+          (click)="backendStatusNotePopover.dismiss()"
+          >Dismiss</ion-button
+        >
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-popover>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="form" class="form">
+    <ion-card class="note-card">
+      <ion-list lines="none">
+        <ion-item class="field">
+          <ion-input
+            label="Title"
+            labelPlacement="stacked"
+            formControlName="title"
+            placeholder="Enter title"
+          ></ion-input>
+        </ion-item>
+
+        <ion-item class="field">
+          <ion-select
+            label="Priority"
+            labelPlacement="stacked"
+            formControlName="priority"
+            interface="action-sheet"
+            [interfaceOptions]="{ header: 'Priority' }"
+          >
+            <ion-select-option *ngFor="let p of priorities" [value]="p"
+              >{{ p }}</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="field">
+          <ion-textarea
+            label="Content"
+            labelPlacement="stacked"
+            formControlName="content"
+            placeholder="Write your note"
+            autoGrow="true"
+          ></ion-textarea>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </form>
+</ion-content>

@@ -1,0 +1,119 @@
+/* Styles for NotePage */
+.form {
+  padding: 0;
+}
+
+.note-card {
+  /* Larger rounded corners */
+  --border-radius: 16px;
+  border-radius: 16px;
+
+  /* Ensure minimum inner spacing */
+  padding: 16px;
+
+  /* Layout similar to reference */
+  max-width: 800px;
+  margin: 16px auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Rounded, filled input containers like the reference design */
+ion-item.field {
+  /* filled container background (dark) */
+  --background: var(--ion-color-step-150, #2b2b2b);
+  background: transparent; /* background moved to native part for proper rendering */
+
+  /* remove default item borders/lines and give rounded shape */
+  border-radius: 12px;
+  overflow: hidden;
+
+  /* comfortable vertical rhythm */
+  margin: 12px 0;
+
+  /* inner paddings for label + control */
+  --inner-padding-start: 12px;
+  --inner-padding-end: 12px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+
+  /* ensure content height is not too tight */
+  --min-height: 52px;
+
+  /* stretch content */
+  width: 100%;
+}
+
+/* Apply rounded filled background on the rendered item element */
+ion-item.field::part(native) {
+  background: var(--background);
+  border-radius: 12px;
+}
+
+/* Make stacked labels lighter and inputs readable */
+ion-item.field ion-label {
+  color: var(--ion-color-step-600, #b5b5b5);
+}
+
+ion-item.field ion-input,
+ion-item.field ion-textarea,
+ion-item.field ion-select {
+  color: var(--ion-text-color, #fff);
+}
+
+/* Add space between stacked label and control content */
+ion-item.field ion-input::part(label),
+ion-item.field ion-textarea::part(label),
+ion-item.field ion-select::part(label) {
+  margin-bottom: 12px;
+}
+
+/* Remove native borders/backgrounds inside Ionic inputs so the item acts as the container */
+ion-item.field ion-input::part(native),
+ion-item.field ion-textarea::part(native) {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Ensure select uses transparent background and correct icon color */
+ion-item.field ion-select::part(placeholder),
+ion-item.field ion-select::part(text) {
+  color: var(--ion-text-color, #fff);
+}
+
+ion-item.field ion-select::part(icon) {
+  color: var(--ion-color-step-550, #bdbdbd);
+}
+
+/* Toolbar action buttons - rounded and spaced like the reference */
+ion-header .save-btn,
+ion-header .cancel-btn {
+  --border-radius: 10px;
+  border-radius: 10px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  margin-inline-start: 8px;
+}
+
+ion-header .save-btn {
+  --background: var(--ion-color-step-200, #3a3a3a);
+  --color: var(--ion-text-color, #fff);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+ion-header .save-btn[disabled] {
+  opacity: 0.6;
+}
+
+ion-header .cancel-btn {
+  --background: transparent;
+  --color: var(--ion-color-step-650, #c8c8c8);
+  border: 1px solid var(--ion-color-step-250, #404040);
+}
+
