@@ -94,12 +94,17 @@ export class NotesService {
   constructor(private apollo: Apollo) {}
 
   watchNotes(priority?: Priority) {
-    return this.apollo.watchQuery<{ notes: Note[] }>({
+    const options: any = {
       query: NOTES_QUERY,
-      variables: { priority },
       fetchPolicy: 'network-only',
       nextFetchPolicy: 'cache-first',
-    });
+    };
+
+    if (priority) {
+      options.variables = { priority };
+    }
+
+    return this.apollo.watchQuery<{ notes: Note[] }>(options);
   }
 
   createNote(input: NoteInput): Observable<Note> {
@@ -107,7 +112,7 @@ export class NotesService {
       .mutate<{ createNote: Note }>({
         mutation: CREATE_NOTE_MUTATION,
         variables: { input },
-        refetchQueries: [{ query: NOTES_QUERY }],
+        refetchQueries: ['Notes'],
       })
       .pipe(map((r) => r.data!.createNote));
   }
@@ -117,7 +122,7 @@ export class NotesService {
       .mutate<{ updateNote: Note }>({
         mutation: UPDATE_NOTE_MUTATION,
         variables: { id, input },
-        refetchQueries: [{ query: NOTES_QUERY }],
+        refetchQueries: ['Notes'],
       })
       .pipe(map((r) => r.data!.updateNote));
   }
@@ -137,7 +142,7 @@ export class NotesService {
       .mutate<{ deleteNote: Note | null }>({
         mutation: DELETE_NOTE_MUTATION,
         variables: { id },
-        refetchQueries: [{ query: NOTES_QUERY }],
+        refetchQueries: ['Notes'],
       })
       .pipe(map((r) => r.data!.deleteNote ?? null));
   }

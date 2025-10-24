@@ -30,6 +30,7 @@ export class HomePage implements OnDestroy {
   private selectedPrioritySig = signal<Priority | 'ALL'>('ALL');
   private pingSub?: Subscription;
   private destroyRef = inject(DestroyRef);
+  private notesSub?: Subscription;
 
   // Expose signal value to template via accessor for [(ngModel)] compatibility
   get selectedPriority(): Priority | 'ALL' {
@@ -68,7 +69,12 @@ export class HomePage implements OnDestroy {
   }
 
   load() {
-    this.notesSvc
+    if (this.notesSub) {
+      this.notesSub.unsubscribe();
+      this.notesSub = undefined;
+    }
+
+    this.notesSub = this.notesSvc
       .watchNotes(this.priority)
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
